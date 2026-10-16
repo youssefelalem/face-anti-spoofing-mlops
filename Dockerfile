@@ -18,8 +18,9 @@ COPY app/ app/
 # Les checkpoints PyTorch (.pt) sont exclus par .dockerignore.
 COPY models/saved/ models/saved/
 
-# Execution sans privileges root
-RUN useradd --create-home appuser
+# Execution sans privileges root ; le dossier des modeles doit lui appartenir, car
+# l'application peut y telecharger les modeles au demarrage (deploiement Render).
+RUN useradd --create-home appuser && chown -R appuser /srv/models
 USER appuser
 
 EXPOSE 8000
