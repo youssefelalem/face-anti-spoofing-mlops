@@ -1,0 +1,48 @@
+{
+  "model": "LBP(8,1) global + 3x3, LBP(8,2) global, SVM RBF (C=10)",
+  "n_features": 649,
+  "n_train": 3335,
+  "validation": {
+    "auc": 0.9795339776239607,
+    "eer": 0.08385028949545081,
+    "threshold": 0.4083735013713238
+  },
+  "test": {
+    "nuaa": {
+      "n": 9123,
+      "auc": 0.9227475338542277,
+      "eer": 0.16044181985970818,
+      "at_validation_threshold": {
+        "threshold": 0.4083735013713238,
+        "accuracy": 0.8297709086923162,
+        "APCER": 0.2688769310883527,
+        "BPCER": 0.001189767995240928,
+        "ACER": 0.13503334954179683,
+        "confusion": {
+          "tn": 3358,
+          "fp": 4,
+          "fn": 1549,
+          "tp": 4212
+        }
+      }
+    },
+    "webcam": {
+      "n": 308,
+      "auc": 1.0,
+      "eer": 0.0,
+      "at_validation_threshold": {
+        "threshold": 0.4083735013713238,
+        "accuracy": 1.0,
+        "APCER": 0.0,
+        "BPCER": 0.0,
+        "ACER": 0.0,
+        "confusion": {
+          "tn": 158,
+          "fp": 0,
+          "fn": 0,
+          "tp": 150
+        }
+      }
+    }
+  }
+}

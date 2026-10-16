@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Collecte de données</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <style>
+    .form { display: grid; gap: 12px; }
+    .form label { display: grid; gap: 4px; font-size: 13px; color: var(--muted); }
+    .form input { font: inherit; padding: 8px 10px; border-radius: 8px; border: 1px solid var(--border);
+                  background: var(--bg); color: var(--text); }
+    .attacks { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+    .attacks button { font: inherit; font-size: 13px; padding: 8px 6px; border-radius: 8px; cursor: pointer;
+                      border: 1px solid var(--border); background: transparent; color: var(--text); }
+    .attacks button.is-active[data-attack="real"] { background: var(--real); border-color: var(--real); color: #fff; }
+    .attacks button.is-active:not([data-attack="real"]) { background: var(--spoof); border-color: var(--spoof); color: #fff; }
+    .big { font-size: 40px; font-weight: 800; font-variant-numeric: tabular-nums; }
+    .help { direction: rtl; text-align: right; font-size: 14px; line-height: 1.8; }
+    .help ol { padding-right: 20px; margin: 6px 0 0; }
+    .stats { font-size: 12px; font-family: ui-monospace, monospace; max-height: 220px; overflow: auto;
+             white-space: pre; color: var(--muted); }
+    .rec { color: var(--spoof); font-weight: 700; }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div><h1>Collecte de données webcam</h1>
+        <p class="subtitle">Les images restent sur cet ordinateur (data/raw/webcam/) — jamais dans Git</p></div>
+    </div>
+    <a class="status" href="/">← Démo</a>
+  </header>
+
+  <main class="layout">
+    <section class="stage card">
+      <div class="viewport">
+        <video id="video" autoplay playsinline muted></video>
+        <canvas id="overlay"></canvas>
+      </div>
+      <div class="controls">
+        <button id="cam" class="btn btn--primary">Démarrer la caméra</button>
+        <button id="rec" class="btn btn--primary" disabled>● Enregistrer</button>
+        <span class="perf" id="info"></span>
+      </div>
+    </section>
+
+    <aside class="side">
+      <section class="card form">
+        <label>Session (lieu / éclairage)<input id="session" value="s1"></label>
+        <label>Sujet (personne)<input id="subject" value="youssef"></label>
+        <div>
+          <p class="note" style="margin:0 0 6px">Type d'image</p>
+          <div class="attacks">
+            <button data-attack="real" class="is-active">Visage réel</button>
+            <button data-attack="print">Photo imprimée</button>
+            <button data-attack="screen">Écran</button>
+          </div>
+        </div>
+        <div><p class="note" style="margin:0">Images de ce clip</p><p class="big" id="count">0</p></div>
+      </section>
+
+      <section class="card help">
+        <h2>طريقة التسجيل</h2>
+        <ol>
+          <li>اختر <b>الجلسة</b> (s1 مثلاً) و<b>اسم الشخص</b> ونوع الصورة، ثم اضغط «Enregistrer».</li>
+          <li>كل مقطع يتوقف تلقائياً بعد <b>150 صورة</b> (حوالي 40 ثانية). حرّك الرأس واقترب وابتعد قليلاً.</li>
+          <li><b>Visage réel</b>: الشخص نفسه أمام الكاميرا.</li>
+          <li><b>Photo imprimée</b>: صورة مطبوعة للشخص، مستوية ثم منحنية ثم متحركة.</li>
+          <li><b>Écran</b>: صورة أو فيديو للشخص على شاشة هاتف أو حاسوب.</li>
+          <li>أعد كل شيء في <b>جلسة ثانية</b> (s2) في مكان أو إضاءة مختلفة: ستُستعمل للاختبار.</li>
+          <li>اطلب <b>موافقة</b> كل صديق قبل تصويره أو طباعة صورته.</li>
+        </ol>
+      </section>
+
+      <section class="card"><h2>Images enregistrées</h2><div class="stats" id="stats">—</div></section>
+    </aside>
+  </main>
+
+  <script>
+  "use strict";
+  const $ = (id) => document.getElementById(id);
+  const video = $("video"), overlay = $("overlay"), ctx = overlay.getContext("2d");
+  const grab = document.createElement("canvas");
+  const PER_CLIP = 150;
+  let attack = "real", recording = false, count = 0;
+
+  document.querySelectorAll("[data-attack]").forEach((b) => b.addEventListener("click", () => {
+    if (recording) return;
+    attack = b.dataset.attack;
+    document.querySelectorAll("[data-attack]").forEach((x) => x.classList.toggle("is-active", x === b));
+  }));
+
+  async function refreshStats() {
+    const r = await fetch("/collect/stats");
+    const { counts } = await r.json();
+    const lines = Object.entries(counts).map(([k, v]) => `${k.padEnd(32)} ${v}`);
+    $("stats").textContent = lines.length ? lines.join("\n") : "aucune image";
+  }
+
+  function draw(box) {
+    const rect = overlay.getBoundingClientRect();
+    overlay.width = rect.width; overlay.height = rect.height;
+    ctx.clearRect(0, 0, rect.width, rect.height);
+    if (!box) return;
+    const s = Math.min(rect.width / grab.width, rect.height / grab.height);
+    const ox = (rect.width - grab.width * s) / 2, oy = (rect.height - grab.height * s) / 2;
+    ctx.lineWidth = 3; ctx.strokeStyle = recording ? "#c4322b" : "#1d8a4e";
+    ctx.strokeRect(ox + (grab.width - box.x - box.w) * s, oy + box.y * s, box.w * s, box.h * s);
+  }
+
+  async function loop() {
+    while (recording && count < PER_CLIP) {
+      grab.width = Math.min(640, video.videoWidth);
+      grab.height = Math.round(video.videoHeight * grab.width / video.videoWidth);
+      grab.getContext("2d").drawImage(video, 0, 0, grab.width, grab.height);
+      const blob = await new Promise((res) => grab.toBlob(res, "image/jpeg", 0.95));
+      const form = new FormData();
+      form.append("file", blob, "f.jpg");
+      form.append("session", $("session").value.trim());
+      form.append("subject", $("subject").value.trim());
+      form.append("attack", attack);
+      const r = await fetch("/collect/frame", { method: "POST", body: form });
+      if (!r.ok) { alert((await r.json()).detail); break; }
+      const res = await r.json();
+      draw(res.box);
+      if (res.face_found) { count++; $("count").textContent = count; }
+      $("info").innerHTML = res.face_found ? '<span class="rec">● enregistrement</span>' : "aucun visage détecté";
+      await new Promise((res2) => setTimeout(res2, 200));
+    }
+    stop();
+  }
+
+  function stop() {
+    recording = false;
+    $("rec").textContent = "● Enregistrer";
+    $("info").textContent = count >= PER_CLIP ? "clip terminé" : "";
+    refreshStats();
+  }
+
+  $("cam").addEventListener("click", async () => {
+    const stream = await navigator.mediaDevices.getUserMedia({ video: { width: 1280, height: 720 } });
+    video.srcObject = stream; await video.play();
+    $("rec").disabled = false; $("cam").disabled = true;
+  });
+  $("rec").addEventListener("click", () => {
+    if (recording) { stop(); return; }
+    recording = true; count = 0; $("count").textContent = 0;
+    $("rec").textContent = "■ Arrêter";
+    loop();
+  });
+  refreshStats();
+  </script>
+</body>
+</html>

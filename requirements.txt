@@ -1,0 +1,23 @@
+# Environnement complet : entrainement + evaluation + application + tests.
+# Installation (CPU) :
+#   python -m pip install -r requirements.txt --extra-index-url https://download.pytorch.org/whl/cpu
+-r requirements-app.txt
+
+# --- Deep Learning (entrainement) ---
+torch
+torchvision
+onnx
+onnxscript
+
+# --- Evaluation / figures du poster ---
+scikit-learn
+matplotlib
+
+# --- MLOps ---
+mlflow
+pyyaml
+
+# --- Qualite / tests ---
+pytest
+httpx
+ruff

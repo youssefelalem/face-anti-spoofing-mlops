@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Face Anti-Spoofing</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="22" height="22"><path fill="currentColor" d="M12 2 4 5v6c0 5 3.4 9.7 8 11 4.6-1.3 8-6 8-11V5l-8-3Zm0 5a3 3 0 1 1 0 6 3 3 0 0 1 0-6Zm0 13c-2.3-.8-4.2-2.6-5.2-4.9 1-1.6 3-2.6 5.2-2.6s4.2 1 5.2 2.6c-1 2.3-2.9 4.1-5.2 4.9Z"/></svg>
+      </span>
+      <div>
+        <h1>Face Anti-Spoofing</h1>
+        <p class="subtitle">Détection d'attaques par présentation · CNN MobileNetV2 + texture LBP</p>
+      </div>
+    </div>
+    <span id="status" class="status status--idle">Modèle : chargement…</span>
+  </header>
+
+  <main class="layout">
+    <section class="stage card">
+      <div class="tabs" role="tablist">
+        <button class="tab is-active" data-mode="webcam" role="tab" aria-selected="true">Webcam en direct</button>
+        <button class="tab" data-mode="upload" role="tab" aria-selected="false">Analyser une image</button>
+      </div>
+
+      <div class="viewport" id="viewport">
+        <video id="video" autoplay playsinline muted></video>
+        <img id="uploaded" alt="Image analysée" hidden>
+        <canvas id="overlay"></canvas>
+        <div class="placeholder" id="placeholder">
+          <p>Cliquez sur <strong>Démarrer la caméra</strong>, placez votre visage face à l'objectif,<br>
+          puis essayez avec une photo imprimée ou affichée sur un téléphone.</p>
+        </div>
+      </div>
+
+      <div class="controls">
+        <div id="webcamControls">
+          <button id="toggleCam" class="btn btn--primary">Démarrer la caméra</button>
+        </div>
+        <div id="uploadControls" hidden>
+          <label class="btn btn--primary">
+            Choisir une image
+            <input id="fileInput" type="file" accept="image/*" hidden>
+          </label>
+        </div>
+        <span class="perf" id="perf"></span>
+      </div>
+    </section>
+
+    <aside class="side">
+      <section class="card verdict" id="verdict" data-state="none">
+        <p class="verdict__kicker">Verdict</p>
+        <p class="verdict__label" id="verdictLabel">En attente</p>
+        <p class="verdict__hint" id="verdictHint">Aucun visage analysé pour l'instant.</p>
+        <div class="meter" aria-hidden="true">
+          <div class="meter__track"><div class="meter__fill" id="meterFill"></div>
+            <div class="meter__thr" id="meterThr"></div></div>
+          <div class="meter__legend"><span>Réel</span><span id="scoreText">score —</span><span>Attaque</span></div>
+        </div>
+        <p class="note" id="details"></p>
+      </section>
+
+      <section class="card">
+        <h2 id="metricsTitle">Performances du modèle</h2>
+        <dl class="metrics" id="metrics">
+          <div><dt>Exactitude</dt><dd data-k="accuracy">—</dd></div>
+          <div><dt>ACER</dt><dd data-k="ACER">—</dd></div>
+          <div><dt>APCER</dt><dd data-k="APCER">—</dd></div>
+          <div><dt>BPCER</dt><dd data-k="BPCER">—</dd></div>
+          <div><dt>AUC</dt><dd data-k="auc">—</dd></div>
+          <div><dt>EER</dt><dd data-k="eer">—</dd></div>
+        </dl>
+        <p class="note">APCER : attaques acceptées à tort · BPCER : vrais visages rejetés à tort.</p>
+      </section>
+
+      <section class="card">
+        <h2>Comment ça marche</h2>
+        <ol class="pipeline">
+          <li><span>1</span>Capture de l'image par la webcam</li>
+          <li><span>2</span>Détection du visage (OpenCV)</li>
+          <li><span>3</span>Score CNN MobileNetV2 (ONNX) + score texture LBP-SVM, fusionnés</li>
+          <li><span>4</span>Lissage temporel sur les dernières images</li>
+        </ol>
+      </section>
+    </aside>
+  </main>
+
+  <footer class="foot">PFA Master DSBD · ICAIS'26 · Données : NUAA Photograph Imposter Database (Tan et al., ECCV 2010)</footer>
+  <script src="/static/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+# Dependances minimales de l'application (image Docker legere, sans PyTorch).
+fastapi
+uvicorn[standard]
+python-multipart
+onnxruntime
+# Modele LBP-SVM serialise avec joblib : meme version de scikit-learn qu'a l'entrainement
+scikit-learn==1.9.1
+# OpenCV 5 a retire le detecteur Haar (CascadeClassifier) : on reste sur la branche 4.x
+opencv-python-headless>=4.10,<5
+numpy

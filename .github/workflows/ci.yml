@@ -1,0 +1,50 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  quality:
+    name: Lint + tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      # Pas de PyTorch en CI : les tests utilisent un modele ONNX factice,
+      # aucune donnee ni modele entraine n'est necessaire (ils ne sont pas dans Git).
+      - name: Installer les dependances
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-app.txt onnx pyyaml scikit-learn pytest httpx ruff
+
+      - name: Lint (ruff)
+        run: ruff check .
+
+      - name: Tests (pytest)
+        run: pytest
+
+  docker:
+    name: Build de l'image Docker
+    runs-on: ubuntu-latest
+    needs: quality
+    steps:
+      - uses: actions/checkout@v4
+      # Le vrai modele n'est pas versionne : on construit l'image avec un modele factice
+      # pour verifier que le Dockerfile reste valide.
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Generer un modele factice
+        run: |
+          pip install onnx numpy opencv-python-headless pytest
+          python -c "from tests.conftest import make_dummy_onnx; make_dummy_onnx('models/saved/mobilenetv2_fas.onnx')"
+          echo '{"model_name":"dummy","version":"ci","threshold":0.5,"classes":["real","spoof"],"input":{"size":128}}' > models/saved/model_meta.json
+      - name: Build
+        run: docker build -t face-antispoofing:ci .

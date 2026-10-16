@@ -1,0 +1,45 @@
+{
+  "n_test": 9123,
+  "n_test_real": 3362,
+  "n_test_spoof": 5761,
+  "auc": 0.6260421957693949,
+  "eer": 0.43707152682383676,
+  "at_validation_threshold": {
+    "threshold": 0.7456949353218079,
+    "accuracy": 0.5265811684752822,
+    "APCER": 0.6153445582364173,
+    "BPCER": 0.23022010707911958,
+    "ACER": 0.42278233265776843,
+    "confusion": {
+      "tn": 2588,
+      "fp": 774,
+      "fn": 3545,
+      "tp": 2216
+    }
+  },
+  "validation": {
+    "loss": 0.20560223337408937,
+    "auc": 0.998286175851208,
+    "eer": 0.017740768034491528,
+    "threshold": 0.7456949353218079,
+    "accuracy": 0.9822552947910704,
+    "APCER": 0.01791713325867861,
+    "BPCER": 0.01756440281030445,
+    "ACER": 0.01774076803449153,
+    "epoch": 3,
+    "phase": "head"
+  },
+  "validation_protocol": "session",
+  "train_config": {
+    "name": "E1-baseline",
+    "strong_aug": false,
+    "grayscale": false,
+    "photo_norm": false,
+    "freeze_blocks": 0,
+    "head_epochs": 3,
+    "finetune_epochs": 6,
+    "head_lr": 0.001,
+    "finetune_lr": 0.0001,
+    "patience": 3
+  }
+}

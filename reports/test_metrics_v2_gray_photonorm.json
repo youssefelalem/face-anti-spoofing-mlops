@@ -1,0 +1,45 @@
+{
+  "n_test": 9123,
+  "n_test_real": 3362,
+  "n_test_spoof": 5761,
+  "auc": 0.5954047405470393,
+  "eer": 0.4634379193991558,
+  "at_validation_threshold": {
+    "threshold": 0.0061089699156582355,
+    "accuracy": 0.6717088676970295,
+    "APCER": 0.018573164381183824,
+    "BPCER": 0.8590124925639501,
+    "ACER": 0.43879282847256695,
+    "confusion": {
+      "tn": 474,
+      "fp": 2888,
+      "fn": 107,
+      "tp": 5654
+    }
+  },
+  "validation": {
+    "loss": 0.46541377099220194,
+    "auc": 0.993471079531289,
+    "eer": 0.03618175018698578,
+    "threshold": 0.0061089699156582355,
+    "accuracy": 0.9637883008356546,
+    "APCER": 0.03664921465968586,
+    "BPCER": 0.03571428571428571,
+    "ACER": 0.03618175018698579,
+    "epoch": 12,
+    "phase": "finetune"
+  },
+  "validation_protocol": "subject",
+  "train_config": {
+    "name": "v2-gray-photonorm-strongaug",
+    "strong_aug": true,
+    "grayscale": true,
+    "photo_norm": true,
+    "freeze_blocks": 0,
+    "head_epochs": 3,
+    "finetune_epochs": 12,
+    "head_lr": 0.001,
+    "finetune_lr": 0.0001,
+    "patience": 3
+  }
+}

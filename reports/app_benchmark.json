@@ -1,0 +1,10 @@
+{
+  "mode": "fusion CNN + LBP-SVM",
+  "onnx_mb": 8.878512,
+  "lbp_svm_mb": 3.416478,
+  "latency_ms_median": 27.677500002027955,
+  "latency_ms_p95": 38.637999998172745,
+  "n_frames": 60,
+  "n_tests": 34,
+  "n_quality_checks": 15
+}

@@ -1,0 +1,45 @@
+{
+  "n_test": 9123,
+  "n_test_real": 3362,
+  "n_test_spoof": 5761,
+  "auc": 0.7171834891345641,
+  "eer": 0.36283173869795265,
+  "at_validation_threshold": {
+    "threshold": 0.10596193373203278,
+    "accuracy": 0.6421133399101173,
+    "APCER": 0.35045998958514146,
+    "BPCER": 0.37061273051754906,
+    "ACER": 0.36053636005134526,
+    "confusion": {
+      "tn": 2116,
+      "fp": 1246,
+      "fn": 2019,
+      "tp": 3742
+    }
+  },
+  "validation": {
+    "loss": 0.09664320527105891,
+    "auc": 0.9999020504113884,
+    "eer": 0.0021929824561403577,
+    "threshold": 0.10596193373203278,
+    "accuracy": 0.9976717112922002,
+    "APCER": 0.0043859649122807015,
+    "BPCER": 0.0,
+    "ACER": 0.0021929824561403508,
+    "epoch": 7,
+    "phase": "finetune"
+  },
+  "validation_protocol": "subject",
+  "train_config": {
+    "name": "pipeline",
+    "strong_aug": false,
+    "grayscale": false,
+    "photo_norm": false,
+    "freeze_blocks": 0,
+    "head_epochs": 3,
+    "finetune_epochs": 12,
+    "head_lr": 0.001,
+    "finetune_lr": 0.0001,
+    "patience": 3
+  }
+}

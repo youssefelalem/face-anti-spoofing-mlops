@@ -1,0 +1,173 @@
+{
+  "contract": "nuaa-face-antispoofing v1.2.0",
+  "passed": true,
+  "warnings": [
+    "biais_luminance_moyenne",
+    "biais_saturation_moyenne"
+  ],
+  "checks": [
+    {
+      "check": "empreinte_archive",
+      "passed": true,
+      "severity": "error",
+      "detail": {
+        "attendu": "a95d1130edebe31e002c19c0dfac1c2fc5cf52a82c11019928d414fdbffa5e83",
+        "observe": "a95d1130edebe31e002c19c0dfac1c2fc5cf52a82c11019928d414fdbffa5e83"
+      }
+    },
+    {
+      "check": "schema",
+      "passed": true,
+      "severity": "error",
+      "detail": "toutes les colonnes conformes"
+    },
+    {
+      "check": "fichiers_presents",
+      "passed": true,
+      "severity": "error",
+      "detail": {
+        "manquants": 0,
+        "exemples": []
+      }
+    },
+    {
+      "check": "images_decodables",
+      "passed": true,
+      "severity": "error",
+      "detail": {
+        "illisibles": 0,
+        "exemples": []
+      }
+    },
+    {
+      "check": "canaux_couleur",
+      "passed": true,
+      "severity": "error",
+      "detail": {
+        "non_conformes": 0,
+        "exemples": []
+      }
+    },
+    {
+      "check": "taille_minimale",
+      "passed": true,
+      "severity": "error",
+      "detail": {
+        "trop_petites": 0,
+        "exemples": []
+      }
+    },
+    {
+      "check": "format_carre",
+      "passed": true,
+      "severity": "error",
+      "detail": {
+        "non_carrees": 0,
+        "exemples": []
+      }
+    },
+    {
+      "check": "volumetrie",
+      "passed": true,
+      "severity": "error",
+      "detail": {
+        "attendu": {
+          "total_images": 12614,
+          "train_val_real": 1743,
+          "train_val_spoof": 1748,
+          "test_real": 3362,
+          "test_spoof": 5761
+        },
+        "observe": {
+          "total_images": 12614,
+          "train_val_real": 1743,
+          "train_val_spoof": 1748,
+          "test_real": 3362,
+          "test_spoof": 5761
+        }
+      }
+    },
+    {
+      "check": "doublons",
+      "passed": true,
+      "severity": "error",
+      "detail": {
+        "doublons": 0
+      }
+    },
+    {
+      "check": "equilibre_classes_train",
+      "passed": true,
+      "severity": "error",
+      "detail": {
+        "ratio_classe_minoritaire": 0.493
+      }
+    },
+    {
+      "check": "sessions_train_test_disjointes",
+      "passed": true,
+      "severity": "error",
+      "detail": {
+        "train_val": [
+          "01",
+          "02"
+        ],
+        "test": [
+          "03"
+        ]
+      }
+    },
+    {
+      "check": "sujets_train_val_disjoints",
+      "passed": true,
+      "severity": "error",
+      "detail": {
+        "train": [
+          "0001",
+          "0002",
+          "0003",
+          "0004",
+          "0005",
+          "0006",
+          "0007"
+        ],
+        "val": [
+          "0008",
+          "0009"
+        ]
+      }
+    },
+    {
+      "check": "aucun_fichier_dans_deux_splits",
+      "passed": true,
+      "severity": "error",
+      "detail": {
+        "conflits": 0
+      }
+    },
+    {
+      "check": "biais_luminance_moyenne",
+      "passed": false,
+      "severity": "warning",
+      "detail": {
+        "auc_feature_seule": 0.919,
+        "seuil": 0.8,
+        "moyenne_real": 95.2,
+        "moyenne_spoof": 138.5,
+        "action": "normalisation photometrique par visage (src/utils/preprocess.py)"
+      }
+    },
+    {
+      "check": "biais_saturation_moyenne",
+      "passed": false,
+      "severity": "warning",
+      "detail": {
+        "auc_feature_seule": 0.887,
+        "seuil": 0.8,
+        "moyenne_real": 71.4,
+        "moyenne_spoof": 42.8,
+        "action": "entree en niveaux de gris (src/utils/preprocess.py)"
+      }
+    }
+  ]
+}

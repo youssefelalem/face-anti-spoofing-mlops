@@ -1,0 +1,14 @@
+.git
+.venv
+.claude
+data
+experiments
+notebooks
+reports
+docs
+tests
+**/__pycache__
+models/saved/*.pt
+models/saved/experiments
+models/saved/train_summary*.json
+*.md

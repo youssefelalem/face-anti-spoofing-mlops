@@ -1,0 +1,18 @@
+[project]
+name = "face-antispoofing-pfa"
+version = "1.0.0"
+description = "Detection d'attaques par presentation (face anti-spoofing) - MobileNetV2, NUAA, FastAPI"
+requires-python = ">=3.11"
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 110
+target-version = "py311"
+extend-exclude = [".venv", "data", "experiments"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP"]

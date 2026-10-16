@@ -1,0 +1,114 @@
+# =========================================================
+#  Face Anti-Spoofing (PFA) — .gitignore
+#  Principe : Git versionne le CODE, jamais les DONNEES
+#             ni les MODELES entraines.
+# =========================================================
+
+# ---------- 1. Donnees (JAMAIS dans Git) ----------
+# Le dataset NUAA et toute image/video restent locaux.
+# On ignore le CONTENU de data/, mais on garde l'arborescence
+# vide grace aux fichiers .gitkeep (voir explication plus bas).
+data/**
+!data/**/
+!data/.gitkeep
+!data/**/.gitkeep
+
+# Formats media, ou qu'ils soient dans l'arborescence
+*.jpg
+*.jpeg
+*.png
+*.bmp
+*.tif
+*.tiff
+*.mp4
+*.avi
+*.mov
+*.mkv
+
+# Exception : figures de resultats (agregats, aucune image de visage) pour le poster
+!reports/figures/*.png
+# Exception : capture de la demo pour le README (visage de l'auteur, avec son accord)
+!docs/assets/app_demo.png
+
+# Poster genere : contient des visages (NUAA = redistribution interdite, donnees webcam
+# personnelles) -> jamais dans Git ; il se regenere avec docs/poster/*.py
+docs/poster/ICAIS26_Poster_FaceAntiSpoofing.*
+
+# ---------- 2. Modeles entraines (JAMAIS dans Git) ----------
+models/saved/**
+!models/saved/**/
+!models/saved/.gitkeep
+*.h5
+*.keras
+*.pb
+*.tflite
+*.onnx
+*.pt
+*.pth
+*.pkl
+*.joblib
+
+# ---------- 3. Experiences / tracking ----------
+experiments/mlflow_runs/**
+!experiments/mlflow_runs/**/
+!experiments/mlflow_runs/.gitkeep
+mlruns/
+mlartifacts/
+.dvc/cache/
+
+# ---------- 4. Secrets (JAMAIS dans Git) ----------
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+credentials.json
+secrets.yaml
+
+# ---------- 5. Python ----------
+__pycache__/
+*.py[cod]
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Environnements virtuels
+venv/
+.venv/
+env/
+ENV/
+
+# ---------- 6. Notebooks ----------
+.ipynb_checkpoints/
+
+# ---------- 7. Outils / qualite ----------
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+.tox/
+
+# ---------- 8. Fichiers personnels (restent sur le poste, jamais publies) ----------
+CLAUDE.md
+.claude/
+docs/cours/
+docs/fiche_defense.md
+docs/guide_presentation.md
+docs/linkedin_post.md
+docs/video/*.mp4
+# Template officiel ICAIS'26 (logos de l'organisateur) : non redistribue
+docs/poster/*.pptx
+# Journaux d'execution locaux
+reports/*.txt
+
+# ---------- 9. IDE / OS ----------
+.vscode/
+.idea/
+*.swp
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/

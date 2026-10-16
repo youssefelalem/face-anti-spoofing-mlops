@@ -1,0 +1,66 @@
+# =====================================================================
+#  Data Contract — Face Anti-Spoofing (PFA)
+#  Contrat entre la source de donnees (NUAA) et le pipeline ML.
+#  Verifie automatiquement par : python -m src.preprocessing.validate_data
+#  Toute violation BLOQUE l'entrainement (fail fast).
+# =====================================================================
+
+contract:
+  name: nuaa-face-antispoofing
+  version: 1.2.0   # 1.2.0 : controles de biais (luminance, saturation)
+  owner: YOUSSEF EL ALEM
+  description: >
+    Visages detectes (format "Face-detector output") de la NUAA Photograph
+    Imposter Database : visages reels (bona fide) et attaques par photo
+    imprimee (print attack), captures par webcam.
+
+source:
+  dataset: NUAA Photograph Imposter Database
+  format: Face-detector output (Detectedface)
+  url: https://parnec.nuaa.edu.cn/_upload/tpl/02/db/731/template731/pages/xtan/NUAAImposterDB_download.html
+  license: Recherche non commerciale uniquement ; redistribution interdite.
+  citation: >
+    X. Tan, Y. Li, J. Liu, L. Jiang. Face Liveness Detection from a Single
+    Image with Sparse Low Rank Bilinear Discriminative Model. ECCV 2010.
+  # Empreinte de l'archive : garantit que tout le monde entraine sur les
+  # MEMES donnees (versioning de donnees leger, sans outil externe).
+  archive_sha256: a95d1130edebe31e002c19c0dfac1c2fc5cf52a82c11019928d414fdbffa5e83
+
+schema:
+  # Colonnes du manifeste data/processed/manifest.csv
+  columns:
+    path:    {type: string, nullable: false, description: chemin relatif a data/raw/nuaa/Detectedface}
+    label:   {type: int, allowed: [0, 1], description: "0 = real (bona fide), 1 = spoof (attaque)"}
+    subject: {type: string, pattern: "^[0-9]{4}$"}
+    session: {type: string, allowed: ["01", "02", "03"]}
+    split:   {type: string, allowed: [train, val, test]}
+
+quality:
+  image:
+    decodable: true          # chaque fichier doit etre une image JPEG lisible
+    channels: 3              # couleur (RGB)
+    min_side_px: 64          # visage assez grand pour etre exploitable
+    max_aspect_ratio: 1.2    # les recadrages NUAA sont (quasi) carres
+  completeness:
+    max_missing_files: 0     # aucun fichier reference ne peut manquer
+    max_duplicate_paths: 0
+  volume:                    # attendus d'apres la documentation officielle
+    total_images: 12614
+    train_val_real: 1743
+    train_val_spoof: 1748
+    test_real: 3362
+    test_spoof: 5761
+  balance:
+    min_class_ratio_train: 0.40   # classe minoritaire >= 40 % du jeu d'entrainement
+  bias:
+    # Detection de raccourci (shortcut) : si une caracteristique triviale separe a elle
+    # seule les classes du jeu d'entrainement, le modele risque de l'apprendre au lieu
+    # de la vraie texture. Avertissement non bloquant -> doit etre traite au pretraitement.
+    features: [luminance_moyenne, saturation_moyenne]
+    max_auc: 0.80
+    severity: warning
+
+leakage:                     # garde-fous contre la fuite de donnees
+  train_test_disjoint_sessions: true   # test = session 03 uniquement
+  train_val_disjoint_subjects: true    # sujets de validation (0008, 0009) jamais vus en train
+  no_path_in_two_splits: true
