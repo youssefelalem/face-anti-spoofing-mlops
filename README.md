@@ -12,6 +12,9 @@
 > internal validation dropped to 0.80 on an unseen recording session; the data contract traced
 > it to a brightness shortcut, and texture fusion made the detector far more robust.
 
+**🔴 Live demo: <https://face-anti-spoofing.onrender.com>** (free hosting: the first visit
+after inactivity takes ~1 min to wake up; frames are analysed and never stored).
+
 <p align="center"><img src="docs/assets/app_demo.png" width="760" alt="Démo de l'application"></p>
 
 Détection d'attaques par présentation (photo imprimée, écran) à partir d'une seule
