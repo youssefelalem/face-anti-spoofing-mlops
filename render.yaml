@@ -1,0 +1,16 @@
+# Blueprint Render.com (offre gratuite) : construit le Dockerfile du depot.
+# Les modeles ne sont pas dans Git : l'application les telecharge au demarrage depuis le
+# depot Hugging Face PRIVE indique par FAS_HF_MODEL_REPO, avec le jeton de lecture HF_TOKEN
+# (a saisir soi-meme dans le tableau de bord Render, jamais dans ce fichier).
+services:
+  - type: web
+    name: face-anti-spoofing
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /health
+    envVars:
+      - key: FAS_HF_MODEL_REPO
+        value: YOUSSEF-ELALEM/face-anti-spoofing-models
+      - key: HF_TOKEN
+        sync: false

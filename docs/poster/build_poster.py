@@ -207,7 +207,7 @@ def main() -> None:
          "these splits share the recording conditions of the training data. How well does a "
          "lightweight CNN hold up when the capture session changes, as it always does in deployment?",
           False)],
-    ], size=18)
+    ], size=21)
 
     # ---- 2. Objectives --------------------------------------------------------
     set_lines(shape(s, "TextBox 31"), [
@@ -218,7 +218,7 @@ def main() -> None:
         "• Audit training data with a formal data contract",
         "• Compare CNN, LBP + SVM and their fusion (ISO/IEC 30107-3)",
         "• Deploy the detector as a containerised web application",
-    ], size=17)
+    ], size=21)
 
     # ---- 3. Data --------------------------------------------------------------
     delete(s, "TextBox 39", "TextBox 40")
@@ -239,7 +239,7 @@ def main() -> None:
     lines.append([("Data-contract audit: ", True),
                   (f"brightness alone separates the classes (AUC {lum:.2f}), "
                    f"and so does colour saturation (AUC {sat:.2f}): a shortcut risk.", False)])
-    set_lines(shape(s, "TextBox 41"), lines, size=14)
+    set_lines(shape(s, "TextBox 41"), lines, size=16)
 
     # ---- 4. Keywords + demo ---------------------------------------------------
     for name, kw in [("TextBox 49", "Anti-Spoofing"), ("TextBox 51", "Transfer Learning"),
@@ -248,13 +248,13 @@ def main() -> None:
     sub_heading(s, 3.9, 82.0, 23.0, "LIVE DEMO APPLICATION")
     shot = REP / "app_screenshot.png"
     if shot.is_file():
-        picture(s, shot, 3.9, 83.6, 23.0, 15.5)
-    text_box(s, 3.9, 99.8, 23.0, 9.5, [
+        picture(s, shot, 3.9, 83.6, 23.0, 20.5)
+    text_box(s, 3.9, 104.6, 23.0, 6.0, [
         ("Webcam → face detection (OpenCV) → CNN (ONNX Runtime) + LBP-SVM → fused verdict in ",
-         None, None, 15),
-        (f"{APP['latency_ms_median']:.0f} ms", True, NAVY, 15),
+         None, None, 18),
+        (f"{APP['latency_ms_median']:.0f} ms", True, NAVY, 18),
         (f" per frame on a laptop CPU, smoothed over {SMOOTHING} frames. FastAPI service in a Docker image "
-         f"({APP['onnx_mb']:.1f} MB model, no GPU).", None, None, 15),
+         f"({APP['onnx_mb']:.1f} MB model, no GPU).", None, None, 18),
     ])
 
     # ---- 5. Methodology : pipeline MLOps (comment) + modele de detection (quoi) ----
@@ -312,8 +312,8 @@ def main() -> None:
          f"LBP-SVM AUC {m('nuaa', LBP, 'auc'):.3f} vs CNN {m('nuaa', CNN, 'auc'):.3f} on NUAA session 3."),
     ]
     for t_name, d_name, title, desc in findings:
-        set_lines(shape(s, t_name), [title])
-        set_lines(shape(s, d_name), [desc])
+        set_lines(shape(s, t_name), [title], size=20)
+        set_lines(shape(s, d_name), [desc], size=17)
 
     # ---- 8. Discussion --------------------------------------------------------
     set_lines(shape(s, "TextBox 125"), [
@@ -328,7 +328,7 @@ def main() -> None:
         [("Limitations. ", True), ("the CNN is unstable: adding webcam data of a single person lowered "
          "its generalisation to other people. NUAA test results were inspected during design "
          f"(optimistic); the webcam set is small ({WEBCAM['n_people']} people); no 3D masks.", False)],
-    ], size=17)
+    ], size=21)
 
     # ---- 9. Conclusion (carte agrandie : la place liberee sous les references) ----
     shift = 20.0
@@ -341,15 +341,15 @@ def main() -> None:
         "",
         [("Future work: ", True), ("larger multi-device data (e.g. CelebA-Spoof), domain generalisation "
          "training, and monitoring of the deployed model.", False)],
-    ], size=21)
-    take = s.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Cm(57.4), Cm(71.0), Cm(22.9), Cm(15.5))
+    ], size=23)
+    take = s.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Cm(57.4), Cm(72.0), Cm(22.9), Cm(13.5))
     take.adjustments[0] = 0.08
     take.fill.solid()
     take.fill.fore_color.rgb = ICE
     take.line.fill.background()
     take.shadow.inherit = False
-    text_box(s, 58.6, 72.8, 20.5, 1.6, [("TAKE-HOME MESSAGE", True, BLUE, 22)])
-    text_box(s, 58.6, 76.0, 20.5, 9.5, [
+    text_box(s, 58.6, 73.6, 20.5, 1.6, [("TAKE-HOME MESSAGE", True, BLUE, 22)])
+    text_box(s, 58.6, 76.6, 20.5, 8.5, [
         ("Validate anti-spoofing models on a new capture session, never only on data recorded like the "
          "training set: that is where shortcuts hide and where deployment fails.", True, NAVY, 28)])
 
@@ -369,7 +369,7 @@ def main() -> None:
         "",
         [("Acknowledgements: ", True), ("Pr. Hafsa BENADDI for her supervision; the NUAA team for sharing "
          "the database for research.", False)],
-    ], size=18)
+    ], size=24)
 
     prs.save(str(OUTPUT))
     print("Poster :", OUTPUT)

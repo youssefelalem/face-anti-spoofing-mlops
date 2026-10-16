@@ -81,6 +81,14 @@ docker build -t face-antispoofing .
 docker run --rm -p 8501:8000 face-antispoofing
 ```
 
+### Déploiement en ligne (gratuit, Render.com)
+
+Les modèles ne sont pas dans Git : ils sont publiés dans un dépôt Hugging Face **privé**
+(`python deploy/upload_models_hf.py`) et téléchargés par l'application au démarrage.
+Sur Render : *New > Blueprint*, choisir ce dépôt (`render.yaml`), puis renseigner la
+variable secrète `HF_TOKEN` (jeton Hugging Face en **lecture**). ~160 Mo de RAM, compatible
+avec l'offre gratuite (512 Mo).
+
 API : `GET /health`, `GET /model`, `POST /predict` (image JPEG/PNG) — documentation
 interactive sur <http://localhost:8501/docs>.
 

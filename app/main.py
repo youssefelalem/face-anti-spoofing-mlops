@@ -36,8 +36,28 @@ MAX_UPLOAD_BYTES = 5 * 1024 * 1024
 COLLECT_ENABLED = os.environ.get("FAS_ENABLE_COLLECT") == "1"
 
 
+MODEL_FILES = ("mobilenetv2_fas.onnx", "model_meta.json", "lbp_svm.joblib", "fusion.json")
+
+
+def fetch_models_from_hub() -> None:
+    """Deploiement : telecharge les modeles depuis un depot Hugging Face PRIVE.
+
+    Active seulement si FAS_HF_MODEL_REPO est defini (ex. sur un Space) ; le jeton de
+    lecture est fourni par la variable d'environnement HF_TOKEN (secret du Space). Les
+    poids ne sont ainsi jamais telechargeables depuis le depot public de l'application.
+    """
+    repo = os.environ.get("FAS_HF_MODEL_REPO")
+    if not repo or MODEL_PATH.is_file():
+        return
+    from huggingface_hub import hf_hub_download
+
+    for name in MODEL_FILES:
+        hf_hub_download(repo, name, local_dir=MODEL_PATH.parent, token=os.environ.get("HF_TOKEN"))
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    fetch_models_from_hub()
     # Sans modele, le service demarre quand meme (utile pour la collecte de donnees) :
     # les routes de prediction repondent alors 503.
     app.state.engine = (AntiSpoofingEngine(MODEL_PATH, META_PATH, LBP_PATH, FUSION_PATH)

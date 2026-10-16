@@ -8,3 +8,5 @@ scikit-learn==1.9.1
 # OpenCV 5 a retire le detecteur Haar (CascadeClassifier) : on reste sur la branche 4.x
 opencv-python-headless>=4.10,<5
 numpy
+# Deploiement : telechargement des modeles depuis un depot Hugging Face prive (optionnel)
+huggingface_hub
